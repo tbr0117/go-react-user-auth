@@ -1,6 +1,8 @@
 package api
 
 import (
+	"authapp/packages/db"
+
 	"github.com/apex/log"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
@@ -23,6 +25,12 @@ func StartServer() {
 }
 
 func startHttpServer() *fiber.App {
+	dbConn, err := db.ConnectDB()
+	if err != nil {
+		log.WithField("reason", err.Error()).Fatal("Db connection error occurred")
+	}
+	defer dbConn.Close()
+
 	app := fiber.New()
 	app.Use(logger.New())
 	app.Use(requestid.New())
@@ -37,7 +45,7 @@ func startHttpServer() *fiber.App {
 		ExposeHeaders:    "Set-Cookie",
 	}))
 
-	linkRoutesToServer(apiRouter)
+	linkRoutesToServer(apiRouter, dbConn)
 
 	return app
 }
