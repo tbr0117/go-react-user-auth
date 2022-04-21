@@ -47,9 +47,9 @@ func InitilizeConfig() {
 	environment, exists := os.LookupEnv(ENVIRONEMT)
 	var localEnvFilePath string
 	if exists && environment == "test" {
-		localEnvFilePath, _ =filepath.Abs("../.env.test")
+		localEnvFilePath, _ = filepath.Abs("./.env.test")
 	} else {
-		localEnvFilePath, _ = filepath.Abs("../.env")
+		localEnvFilePath, _ = filepath.Abs("./.env")
 	}
 
 	if err := godotenv.Load(localEnvFilePath); err != nil {
@@ -59,15 +59,13 @@ func InitilizeConfig() {
 	for key := range ConfigSettings {
 		envVal, exists := os.LookupEnv(key)
 		if !exists {
-			if !exists {
-				if requiredData[key] {
-					log.Fatal(key + " not found in env")
-				}
-				continue
+			if requiredData[key] {
+				log.Fatal(key + " not found in env")
 			}
-			if _, ok := ConfigSettings[key]; ok {
-				ConfigSettings[key] = envVal
-			}
+			continue
+		}
+		if _, ok := ConfigSettings[key]; ok {
+			ConfigSettings[key] = envVal
 		}
 	}
 	log.Info("All config & secrets set")

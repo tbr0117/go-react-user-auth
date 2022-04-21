@@ -37,7 +37,7 @@ func CreateUser(c *fiber.Ctx, dbConn *sql.DB) error {
 	}
 
 	user.UpdateHashPassword()
-	_, err := dbConn.Query(userModel.CreateUserQuery, user.Name, user.Password, user,user.Email)
+	_, err := dbConn.Query(userModel.CreateUserQuery, user.Name, user.Password, user.Email)
 	if err != nil {
 		return nil
 	}
